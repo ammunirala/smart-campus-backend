@@ -1,67 +1,39 @@
 package com.smartcampus.security;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-import javax.crypto.SecretKey;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class JwtUtil {
 
-  @Value("${jwt.secret}")
-  private String secret;
+    private final String SECRET_KEY = "smartcampus-secret-key-1234567890";
 
-  @Value("${jwt.expiration}")
-  private long expiration;
+    
+    public String generateToken(String email, String role) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
 
-  // ✅ FIX 1: Proper charset
-  private SecretKey getSigningKey() {
-    return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-  }
+    
+    public String extractEmail(String token) {
+        return extractAllClaims(token).getSubject();
+    }
 
-  // ✅ TOKEN GENERATION
-  public String generateToken(String email) {
-    return Jwts.builder()
-        .subject(email)
-        .issuedAt(new Date())
-        .expiration(new Date(System.currentTimeMillis() + expiration))
-        .signWith(getSigningKey())
-        .compact();
-  }
-
-  // ✅ FIX 2: Correct parser for jjwt 0.12.x
-  public String extractEmail(String token) {
-    return Jwts.parser()
-        .verifyWith(getSigningKey())
-        .build()
-        .parseSignedClaims(token)
-        .getPayload()
-        .getSubject();
-  }
-
-  public String generateToken(String email, String role) {
-    return Jwts.builder()
-        .subject(email)
-        .claim("role", role)
-        .issuedAt(new Date())
-        .expiration(new Date(System.currentTimeMillis() + expiration))
-        .signWith(getSigningKey())
-        .compact();
-  }
-
-  public String extractRole(String token) {
-    return Jwts.parser()
-        .verifyWith(getSigningKey())
-        .build()
-        .parseSignedClaims(token)
-        .getPayload()
-        .get("role", String.class);
-  }
-
+    
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
+    }
 }
