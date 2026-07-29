@@ -35,9 +35,19 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
+    public List<Student> getStudentsByCourse(Long courseId) {
+
+        if (!courseRepository.existsById(courseId)) {
+            throw new RuntimeException("Course not found");
+        }
+
+        return studentRepository.findByCoursesId(courseId);
+    }
+
     public Student getStudentById(Long id) {
         return studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("Student not found"));
     }
 
     public Student enrollCourse(Long studentId, Long courseId) {
@@ -45,7 +55,19 @@ public class StudentService {
         Student student = getStudentById(studentId);
 
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("Course not found"));
+
+        boolean alreadyEnrolled = student.getCourses()
+                .stream()
+                .anyMatch(existingCourse ->
+                        existingCourse.getId().equals(courseId));
+
+        if (alreadyEnrolled) {
+            throw new RuntimeException(
+                    "Student is already enrolled in this course"
+            );
+        }
 
         student.getCourses().add(course);
 
@@ -56,17 +78,25 @@ public class StudentService {
 
         Student student = getStudentById(studentId);
 
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+        boolean removed = student.getCourses()
+                .removeIf(course ->
+                        course.getId().equals(courseId));
 
-        student.getCourses().remove(course);
+        if (!removed) {
+            throw new RuntimeException(
+                    "Student is not enrolled in this course"
+            );
+        }
 
         return studentRepository.save(student);
     }
 
     public Student getStudentByEmail(String email) {
         return studentRepository.findByUserEmail(email)
-                .orElseThrow(() -> new RuntimeException("Student profile not found"));
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Student profile not found"
+                        ));
     }
 
     public Student getMyProfile(String email) {
@@ -81,4 +111,5 @@ public class StudentService {
 
         studentRepository.deleteById(id);
     }
+
 }

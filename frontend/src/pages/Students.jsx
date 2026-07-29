@@ -11,6 +11,14 @@ function Students() {
   const [semester, setSemester] = useState("all");
   const [selectedStudent, setSelectedStudent] = useState(null);
 
+  // Course enrollment
+  const [courses, setCourses] = useState([]);
+  const [selectedCourseId, setSelectedCourseId] = useState("");
+  const [enrolling, setEnrolling] = useState(false);
+  const [removingCourseId, setRemovingCourseId] = useState(null);
+  const [courseMessage, setCourseMessage] = useState("");
+  const [courseError, setCourseError] = useState("");
+
   const loadStudents = async () => {
     try {
       setLoading(true);
@@ -27,9 +35,107 @@ function Students() {
     }
   };
 
+  const loadCourses = async () => {
+    try {
+      const response = await api.get("/courses");
+      setCourses(response.data);
+    } catch (err) {
+      console.error("Failed to load courses:", err);
+      setCourseError("Failed to load available courses");
+    }
+  };
+
   useEffect(() => {
     loadStudents();
   }, []);
+
+  const updateStudentLocally = (updatedStudent) => {
+    setSelectedStudent(updatedStudent);
+
+    setStudents((currentStudents) =>
+      currentStudents.map((student) =>
+        student.id === updatedStudent.id
+          ? updatedStudent
+          : student
+      )
+    );
+  };
+
+  const openStudent = async (student) => {
+    setSelectedStudent(student);
+    setSelectedCourseId("");
+    setCourseMessage("");
+    setCourseError("");
+
+    await loadCourses();
+  };
+
+  const closeStudent = () => {
+    setSelectedStudent(null);
+    setSelectedCourseId("");
+    setCourseMessage("");
+    setCourseError("");
+    setRemovingCourseId(null);
+  };
+
+  const enrollCourse = async () => {
+    if (!selectedStudent || !selectedCourseId) return;
+
+    try {
+      setEnrolling(true);
+      setCourseMessage("");
+      setCourseError("");
+
+      const response = await api.post(
+        `/students/${selectedStudent.id}/courses/${selectedCourseId}`
+      );
+
+      updateStudentLocally(response.data);
+
+      setSelectedCourseId("");
+      setCourseMessage("Course enrolled successfully.");
+    } catch (err) {
+      setCourseError(
+        err.response?.data?.message ||
+          err.response?.data ||
+          "Failed to enroll course"
+      );
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
+  const removeCourse = async (courseId) => {
+    if (!selectedStudent) return;
+
+    const confirmed = window.confirm(
+      "Remove this course from the student?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setRemovingCourseId(courseId);
+      setCourseMessage("");
+      setCourseError("");
+
+      const response = await api.delete(
+        `/students/${selectedStudent.id}/courses/${courseId}`
+      );
+
+      updateStudentLocally(response.data);
+
+      setCourseMessage("Course removed successfully.");
+    } catch (err) {
+      setCourseError(
+        err.response?.data?.message ||
+          err.response?.data ||
+          "Failed to remove course"
+      );
+    } finally {
+      setRemovingCourseId(null);
+    }
+  };
 
   const filteredStudents = useMemo(() => {
     return students.filter((student) => {
@@ -53,6 +159,18 @@ function Students() {
   const departments = new Set(
     students.map((student) => student.department).filter(Boolean)
   ).size;
+
+  const availableCourses = useMemo(() => {
+    if (!selectedStudent) return [];
+
+    const enrolledCourseIds = new Set(
+      selectedStudent.courses?.map((course) => course.id) || []
+    );
+
+    return courses.filter(
+      (course) => !enrolledCourseIds.has(course.id)
+    );
+  }, [courses, selectedStudent]);
 
   return (
     <div className="management-page">
@@ -127,6 +245,7 @@ function Students() {
               onChange={(e) => setSemester(e.target.value)}
             >
               <option value="all">All Semesters</option>
+
               {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
                 <option key={sem} value={sem}>
                   Semester {sem}
@@ -228,9 +347,7 @@ function Students() {
                     <td>
                       <button
                         className="view-button"
-                        onClick={() =>
-                          setSelectedStudent(student)
-                        }
+                        onClick={() => openStudent(student)}
                       >
                         View
                       </button>
@@ -246,7 +363,7 @@ function Students() {
       {selectedStudent && (
         <div
           className="modal-overlay"
-          onMouseDown={() => setSelectedStudent(null)}
+          onMouseDown={closeStudent}
         >
           <div
             className="modal-card student-details-modal"
@@ -263,7 +380,7 @@ function Students() {
 
               <button
                 className="close-button"
-                onClick={() => setSelectedStudent(null)}
+                onClick={closeStudent}
               >
                 ×
               </button>
@@ -281,7 +398,10 @@ function Students() {
 
               <div>
                 <h3>{selectedStudent.name}</h3>
-                <p>{selectedStudent.user?.email}</p>
+
+                <p>
+                  {selectedStudent.user?.email || "No email"}
+                </p>
 
                 <span
                   className={
@@ -300,9 +420,7 @@ function Students() {
             <div className="student-info-grid">
               <div>
                 <span>Roll Number</span>
-                <strong>
-                  {selectedStudent.rollNumber}
-                </strong>
+                <strong>{selectedStudent.rollNumber}</strong>
               </div>
 
               <div>
@@ -314,9 +432,7 @@ function Students() {
 
               <div className="full-info">
                 <span>Department</span>
-                <strong>
-                  {selectedStudent.department}
-                </strong>
+                <strong>{selectedStudent.department}</strong>
               </div>
             </div>
 
@@ -334,6 +450,63 @@ function Students() {
                 </span>
               </div>
 
+              {/* COURSE ENROLLMENT */}
+
+              <div className="student-enroll-course">
+                <select
+                  value={selectedCourseId}
+                  onChange={(e) =>
+                    setSelectedCourseId(e.target.value)
+                  }
+                  disabled={
+                    enrolling || availableCourses.length === 0
+                  }
+                >
+                  <option value="">
+                    {availableCourses.length === 0
+                      ? "No courses available"
+                      : "Select course to enroll"}
+                  </option>
+
+                  {availableCourses.map((course) => (
+                    <option
+                      key={course.id}
+                      value={course.id}
+                    >
+                      {course.code} - {course.name}
+                    </option>
+                  ))}
+                </select>
+
+                <button
+                  className="primary-button"
+                  onClick={enrollCourse}
+                  disabled={
+                    !selectedCourseId ||
+                    enrolling ||
+                    availableCourses.length === 0
+                  }
+                >
+                  {enrolling
+                    ? "Enrolling..."
+                    : "Enroll Course"}
+                </button>
+              </div>
+
+              {courseMessage && (
+                <div className="student-course-success">
+                  {courseMessage}
+                </div>
+              )}
+
+              {courseError && (
+                <div className="alert error-alert">
+                  {courseError}
+                </div>
+              )}
+
+              {/* ENROLLED COURSES */}
+
               {selectedStudent.courses?.length > 0 ? (
                 <div className="student-course-list">
                   {selectedStudent.courses.map((course) => (
@@ -345,14 +518,29 @@ function Students() {
                         CR
                       </div>
 
-                      <div>
+                      <div className="student-course-details">
                         <strong>{course.name}</strong>
                         <p>{course.code}</p>
+
                         <small>
                           {course.department} · Semester{" "}
                           {course.semester}
                         </small>
                       </div>
+
+                      <button
+                        className="student-remove-course"
+                        onClick={() =>
+                          removeCourse(course.id)
+                        }
+                        disabled={
+                          removingCourseId === course.id
+                        }
+                      >
+                        {removingCourseId === course.id
+                          ? "Removing..."
+                          : "Remove"}
+                      </button>
                     </div>
                   ))}
                 </div>

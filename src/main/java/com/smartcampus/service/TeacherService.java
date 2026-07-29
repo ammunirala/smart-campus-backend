@@ -47,7 +47,35 @@ public class TeacherService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
+        boolean alreadyAssigned = teacher.getCourses()
+                .stream()
+                .anyMatch(existingCourse ->
+                        existingCourse.getId().equals(courseId));
+
+        if (alreadyAssigned) {
+            throw new RuntimeException(
+                    "Course is already assigned to this teacher"
+            );
+        }
+
         teacher.getCourses().add(course);
+
+        return teacherRepository.save(teacher);
+    }
+
+    public Teacher removeCourse(Long teacherId, Long courseId) {
+
+        Teacher teacher = getTeacherById(teacherId);
+
+        boolean removed = teacher.getCourses()
+                .removeIf(course ->
+                        course.getId().equals(courseId));
+
+        if (!removed) {
+            throw new RuntimeException(
+                    "Course is not assigned to this teacher"
+            );
+        }
 
         return teacherRepository.save(teacher);
     }
@@ -63,6 +91,10 @@ public class TeacherService {
 
     public Teacher getTeacherByEmail(String email) {
         return teacherRepository.findByUserEmail(email)
-                .orElseThrow(() -> new RuntimeException("Teacher profile not found"));
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Teacher profile not found"
+                        )
+                );
     }
 }

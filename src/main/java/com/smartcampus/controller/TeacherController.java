@@ -51,6 +51,15 @@ public class TeacherController {
         return teacherService.assignCourse(teacherId, courseId);
     }
 
+    @DeleteMapping("/{teacherId}/courses/{courseId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Teacher removeCourse(
+            @PathVariable Long teacherId,
+            @PathVariable Long courseId) {
+
+        return teacherService.removeCourse(teacherId, courseId);
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String deleteTeacher(@PathVariable Long id) {

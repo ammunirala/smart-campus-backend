@@ -68,4 +68,11 @@ public class StudentController {
 
         return "Student deleted successfully";
     }
+    @GetMapping("/course/{courseId}")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
+    public List<Student> getStudentsByCourse(
+            @PathVariable Long courseId) {
+
+        return studentService.getStudentsByCourse(courseId);
+    }
 }
