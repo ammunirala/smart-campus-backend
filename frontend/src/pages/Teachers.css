@@ -1,0 +1,241 @@
+.teacher-toolbar {
+  display: flex;
+  gap: 9px;
+}
+
+.teacher-avatar {
+  min-width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #eef4ff;
+  color: #3538cd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.teacher-course-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 26px;
+  padding: 0 8px;
+  background: #f2f4f7;
+  color: #344054;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inactive-badge {
+  display: inline-block;
+  padding: 4px 9px;
+  background: #fef3f2;
+  color: #b42318;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.teacher-view-button {
+  padding: 7px 12px;
+  border: 1px solid #d0d5dd;
+  border-radius: 7px;
+  background: white;
+  color: #344054;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.teacher-view-button:hover {
+  background: #f9fafb;
+}
+
+.teacher-details-modal {
+  max-width: 620px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.teacher-modal-eyebrow {
+  margin: 0 0 5px !important;
+  color: #2563eb !important;
+  font-size: 10px !important;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.teacher-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  background: #f8faff;
+  border: 1px solid #eaecf0;
+  border-radius: 11px;
+}
+
+.teacher-profile-avatar {
+  min-width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.teacher-profile-header h3 {
+  margin: 0;
+  color: #101828;
+  font-size: 16px;
+}
+
+.teacher-profile-header p {
+  margin: 4px 0 8px;
+  color: #667085;
+  font-size: 12px;
+}
+
+.teacher-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.teacher-info-grid > div {
+  padding: 14px;
+  border: 1px solid #eaecf0;
+  border-radius: 9px;
+}
+
+.teacher-info-grid span {
+  display: block;
+  color: #98a2b3;
+  font-size: 10px;
+  margin-bottom: 5px;
+}
+
+.teacher-info-grid strong {
+  color: #344054;
+  font-size: 12px;
+}
+
+.teacher-full-info {
+  grid-column: 1 / -1;
+}
+
+.teacher-courses-section {
+  margin-top: 22px;
+}
+
+.teacher-courses-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.teacher-courses-heading h3 {
+  margin: 0;
+  color: #101828;
+  font-size: 14px;
+}
+
+.teacher-courses-heading p {
+  margin: 4px 0 0;
+  color: #98a2b3;
+  font-size: 10px;
+}
+
+.teacher-courses-heading > span {
+  min-width: 27px;
+  height: 27px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef4ff;
+  color: #3538cd;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.teacher-course-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.teacher-course-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid #eaecf0;
+  border-radius: 9px;
+}
+
+.teacher-course-icon {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #eef4ff;
+  color: #3538cd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.teacher-course-card strong {
+  display: block;
+  color: #344054;
+  font-size: 12px;
+}
+
+.teacher-course-card p {
+  margin: 3px 0;
+  color: #2563eb;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.teacher-course-card small {
+  color: #98a2b3;
+  font-size: 9px;
+}
+
+.teacher-no-courses {
+  margin-top: 12px;
+  padding: 25px;
+  text-align: center;
+  border: 1px dashed #d0d5dd;
+  border-radius: 9px;
+  color: #98a2b3;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .teacher-toolbar {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .teacher-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-full-info {
+    grid-column: auto;
+  }
+}

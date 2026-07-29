@@ -1,0 +1,276 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f6f8fc;
+  color: #172033;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+}
+
+.app-sidebar {
+  width: 270px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  background: #101828;
+  padding: 25px 18px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  z-index: 100;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 7px 25px;
+}
+
+.logo-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: white;
+
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.app-logo h2 {
+  margin: 0;
+  color: white;
+  font-size: 17px;
+}
+
+.app-logo span {
+  display: block;
+  margin-top: 3px;
+  color: #98a2b3;
+  font-size: 11px;
+}
+
+.menu-label {
+  color: #667085;
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  font-weight: 700;
+
+  margin: 17px 13px 10px;
+}
+
+.app-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  text-decoration: none;
+
+  padding: 12px 14px;
+  border-radius: 9px;
+
+  color: #98a2b3;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  transition: 0.2s;
+}
+
+.menu-link span {
+  width: 20px;
+  text-align: center;
+  font-size: 17px;
+}
+
+.menu-link:hover {
+  color: white;
+  background: #1d2939;
+}
+
+.menu-link.active {
+  color: white;
+  background: #344054;
+}
+
+.sidebar-bottom {
+  border-top: 1px solid #1d2939;
+  padding-top: 18px;
+}
+
+.admin-mini-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+}
+
+.profile-circle {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+
+  background: #2563eb;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+}
+
+.admin-mini-profile strong {
+  color: white;
+  display: block;
+  font-size: 13px;
+}
+
+.admin-mini-profile span {
+  display: block;
+  color: #98a2b3;
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+.sidebar-logout {
+  width: 100%;
+  margin-top: 14px;
+
+  padding: 10px;
+
+  border-radius: 8px;
+  border: 1px solid #344054;
+
+  background: transparent;
+  color: #d0d5dd;
+
+  cursor: pointer;
+}
+
+.sidebar-logout:hover {
+  background: #b42318;
+  border-color: #b42318;
+  color: white;
+}
+
+.app-main {
+  margin-left: 270px;
+  width: calc(100% - 270px);
+  min-height: 100vh;
+}
+
+.topbar {
+  height: 68px;
+
+  background: rgba(255, 255, 255, 0.95);
+
+  border-bottom: 1px solid #eaecf0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 35px;
+
+  color: #667085;
+  font-size: 13px;
+
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar-status {
+  width: 7px;
+  height: 7px;
+
+  display: inline-block;
+  margin-right: 7px;
+
+  background: #12b76a;
+  border-radius: 50%;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.top-avatar {
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+
+  background: #eef4ff;
+  color: #3538cd;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+}
+
+.page-container {
+  padding: 34px;
+  max-width: 1600px;
+  margin: auto;
+}
+
+@media (max-width: 850px) {
+  .app-sidebar {
+    width: 210px;
+  }
+
+  .app-main {
+    margin-left: 210px;
+    width: calc(100% - 210px);
+  }
+
+  .app-logo span,
+  .admin-mini-profile span {
+    display: none;
+  }
+
+  .page-container {
+    padding: 20px;
+  }
+}
